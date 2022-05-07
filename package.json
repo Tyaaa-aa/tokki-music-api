@@ -7,5 +7,9 @@
     "fluent-ffmpeg": "^2.1.2",
     "loader": "^2.1.1",
     "youtube-audio-stream": "^0.3.61"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
   }
 }
