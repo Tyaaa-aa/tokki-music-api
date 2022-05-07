@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "@ffmpeg-installer/ffmpeg": "^1.1.0",
+    "cors": "^2.8.5",
+    "express": "^4.18.1",
+    "ffmpeg": "^0.0.4",
+    "fluent-ffmpeg": "^2.1.2",
+    "loader": "^2.1.1",
+    "youtube-audio-stream": "^0.3.61"
+  }
+}
