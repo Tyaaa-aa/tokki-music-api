@@ -1,4 +1,5 @@
 const stream = require('youtube-audio-stream')
+
 async function handleView(req, res) {
     try {
         for await (const chunk of stream(`${req.query.videoid}`)) {
@@ -54,6 +55,18 @@ app.get('/api', async function (req, res) {
     // console.log(videos)
 
     handleView(req, res)
+})
+
+app.get('/api2', async function (req, res) {
+    const url = req.query.videoid
+    // console.log(url);
+    const ytdl = require('ytdl-core')
+
+    let info = await ytdl(url, {
+        filter: 'audioonly'
+    })
+    
+    info.pipe(res)
 })
 
 const PORT = process.env.PORT || 5050;
