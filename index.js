@@ -65,7 +65,7 @@ app.get('/api2', async function (req, res) {
     let info = await ytdl(url, {
         filter: 'audioonly'
     })
-    
+
     info.pipe(res)
 })
 
@@ -74,3 +74,21 @@ app.listen(PORT, () => {
     console.log(`Example app listening on port ${PORT}`)
     // console.log(`Example app listening on port ${app}`)
 })
+
+
+
+
+
+// Listen on a specific host via the HOST environment variable
+var host = process.env.HOST || '0.0.0.0';
+
+var cors_proxy = require('cors-anywhere');
+
+
+app.get('/proxy', cors_proxy.createServer({
+    originWhitelist: [], // Allow all origins
+    requireHeader: ['origin', 'x-requested-with'],
+    removeHeaders: ['cookie', 'cookie2']
+}).listen(port, host, function () {
+    console.log('Running CORS Anywhere on ' + host + ':' + port);
+}))
