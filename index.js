@@ -50,7 +50,7 @@ app.use(function (req, res, next) {
 app.get('/api', async function (req, res) {
     // const url = req.query.search
     // // let info = await getData(url)
-    // const videos = await yt.search(url);
+    // const videos = await yt.search(url); 
     // res.send(videos)
     // console.log(videos)
 
