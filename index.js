@@ -2,7 +2,7 @@ const stream = require('youtube-audio-stream')
 
 async function handleView(req, res) {
     try {
-        for await (const chunk of stream(`${req.query.videoid}`)) {
+        for await (const chunk of stream(`${req.query.q}`)) {
             res.write(chunk)
         }
         res.end()
@@ -47,18 +47,12 @@ app.use(function (req, res, next) {
     next()
 })
 
-app.get('/api', async function (req, res) {
-    // const url = req.query.search
-    // // let info = await getData(url)
-    // const videos = await yt.search(url); 
-    // res.send(videos)
-    // console.log(videos)
-
+app.get('/api/stream', async function (req, res) {
     handleView(req, res)
 })
 
-app.get('/api2', async function (req, res) {
-    const url = req.query.videoid
+app.get('/api/music', async function (req, res) {
+    const url = req.query.q
     // console.log(url);
     const ytdl = require('ytdl-core')
 
@@ -69,29 +63,23 @@ app.get('/api2', async function (req, res) {
     info.pipe(res)
 })
 
-const PORT = process.env.PORT || 5050;
-app.listen(PORT, () => {
-    console.log(`Example app listening on port ${PORT}`)
-    // console.log(`Example app listening on port ${app}`)
+
+// Search API
+
+// // const api = require('./search')
+// const api = require('./api/search')
+
+// // app.use('/search', api) 
+// app.use('/api/search', api) 
+
+const yt = require('youtube-search-without-api-key')
+app.get('/api/search', async function (req, res) {
+    const url = req.query.q
+    // let info = await getData(url)
+    const videos = await yt.search(url);
+    res.send(videos)
+    console.log(videos)
 })
-
-
-
-// let cors_proxy = require('cors-anywhere').createServer({
-//     requireHeader: ['origin', 'x-requested-with'],
-//     removeHeaders: [
-//         'cookie',
-//         'cookie2',
-//     ],
-//     // See README.md for other options
-// });
-
-// app.get('/proxy', function (req, res) {
-//     req.url = req.url.replace('/proxy/', '/'); // Strip "/proxy" from the front of the URL.
-//     cors_proxy.emit('request', req, res);
-// })
-
-
 
 
 let corsAnywhere = require('cors-anywhere')
@@ -103,7 +91,14 @@ let proxy = corsAnywhere.createServer({
 });
 
 /* Attach our cors proxy to the existing API on the /proxy endpoint. */
-app.get('/proxy/:proxyUrl*', (req, res) => {
-    req.url = req.url.replace('/proxy/', '/'); // Strip '/proxy' from the front of the URL, else the proxy won't work.
+app.get('/api/proxy/:proxyUrl*', (req, res) => {
+    req.url = req.url.replace('/api/proxy/', '/'); // Strip '/proxy' from the front of the URL, else the proxy won't work.
     proxy.emit('request', req, res);
 });
+
+
+const PORT = process.env.PORT || 5050;
+app.listen(PORT, () => {
+    console.log(`Example app listening on port ${PORT}`)
+    // console.log(`Example app listening on port ${app}`)
+})

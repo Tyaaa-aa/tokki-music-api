@@ -8,7 +8,8 @@
     "ffmpeg": "^0.0.4",
     "fluent-ffmpeg": "^2.1.2",
     "loader": "^2.1.1",
-    "youtube-audio-stream": "^0.3.61"
+    "youtube-audio-stream": "^0.3.61",
+    "youtube-search-without-api-key": "^1.0.7"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
