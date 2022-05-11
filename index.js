@@ -65,7 +65,7 @@ app.get('/api2', async function (req, res) {
     let info = await ytdl(url, {
         filter: 'audioonly'
     })
-    
+
     info.pipe(res)
 })
 
@@ -77,3 +77,16 @@ app.listen(PORT, () => {
 
 
 
+let cors_proxy = require('cors-anywhere').createServer({
+    requireHeader: ['origin', 'x-requested-with'],
+    removeHeaders: [
+        'cookie',
+        'cookie2',
+    ],
+    // See README.md for other options
+});
+
+app.get('/proxy', function (req, res) {
+    req.url = req.url.replace('/proxy/', '/'); // Strip "/proxy" from the front of the URL.
+    cors_proxy.emit('request', req, res);
+})
