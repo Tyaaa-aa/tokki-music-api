@@ -77,16 +77,33 @@ app.listen(PORT, () => {
 
 
 
-let cors_proxy = require('cors-anywhere').createServer({
-    requireHeader: ['origin', 'x-requested-with'],
-    removeHeaders: [
-        'cookie',
-        'cookie2',
-    ],
-    // See README.md for other options
+// let cors_proxy = require('cors-anywhere').createServer({
+//     requireHeader: ['origin', 'x-requested-with'],
+//     removeHeaders: [
+//         'cookie',
+//         'cookie2',
+//     ],
+//     // See README.md for other options
+// });
+
+// app.get('/proxy', function (req, res) {
+//     req.url = req.url.replace('/proxy/', '/'); // Strip "/proxy" from the front of the URL.
+//     cors_proxy.emit('request', req, res);
+// })
+
+
+
+
+let corsAnywhere = require('cors-anywhere')
+
+let proxy = corsAnywhere.createServer({
+    originWhitelist: [], // Allow all origins
+    requireHeaders: [], // Do not require any headers.
+    removeHeaders: [] // Do not remove any headers.
 });
 
-app.get('/proxy', function (req, res) {
-    req.url = req.url.replace('/proxy/', '/'); // Strip "/proxy" from the front of the URL.
-    cors_proxy.emit('request', req, res);
-})
+/* Attach our cors proxy to the existing API on the /proxy endpoint. */
+app.get('/proxy/:proxyUrl*', (req, res) => {
+    req.url = req.url.replace('/proxy/', '/'); // Strip '/proxy' from the front of the URL, else the proxy won't work.
+    proxy.emit('request', req, res);
+});
