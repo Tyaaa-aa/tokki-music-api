@@ -52,23 +52,28 @@ app.get('/api/stream', async function (req, res) {
 })
 
 app.get('/api/music', async function (req, res) {
+    const url = req.query.q
+
     try {
+        let vara = fetch(`https://tokki-music-api.herokuapp.com/api/proxy/https://www.youtube.com/oembed?url=http%3A//www.youtube.com/watch?v=${url}&format=json`)
+        vara.then(async function (response) {
+            if (response.ok) {
+                const ytdl = require('ytdl-core')
 
+                let info = await ytdl(url, {
+                    filter: 'audioonly'
+                })
 
-        const url = req.query.q
-        // console.log(url);
-        const ytdl = require('ytdl-core')
-
-        let info = await ytdl(url, {
-            filter: 'audioonly'
+                info.pipe(res)
+            }
+        }).catch(function (err) {
+            console.log(err)
         })
-
-        info.pipe(res)
     } catch (error) {
-        console.log(error);
+        console.log(error)
     }
 })
- 
+
 
 // Search API 
 
