@@ -52,15 +52,21 @@ app.get('/api/stream', async function (req, res) {
 })
 
 app.get('/api/music', async function (req, res) {
-    const url = req.query.q
-    // console.log(url);
-    const ytdl = require('ytdl-core')
+    try {
 
-    let info = await ytdl(url, {
-        filter: 'audioonly'
-    })
 
-    info.pipe(res)
+        const url = req.query.q
+        // console.log(url);
+        const ytdl = require('ytdl-core')
+
+        let info = await ytdl(url, {
+            filter: 'audioonly'
+        })
+
+        info.pipe(res)
+    } catch (error) {
+        console.log(error);
+    }
 })
 
 
@@ -95,7 +101,7 @@ app.get('/api/proxy/:proxyUrl*', (req, res) => {
     req.url = req.url.replace('/api/proxy/', '/'); // Strip '/proxy' from the front of the URL, else the proxy won't work.
     proxy.emit('request', req, res);
 });
- 
+
 
 const PORT = process.env.PORT || 5050;
 app.listen(PORT, () => {
