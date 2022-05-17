@@ -55,7 +55,7 @@ app.get('/api/music', async function (req, res) {
     const url = req.query.q
 
     try {
-        let vara = fetch(`https://tokki-music-api.herokuapp.com/api/proxy/https://www.youtube.com/oembed?url=http%3A//www.youtube.com/watch?v=${url}&format=json`)
+        let vara = fetch(`https://www.youtube.com/oembed?url=http%3A//www.youtube.com/watch?v=${url}&format=json`)
         vara.then(async function (response) {
             if (response.ok) {
                 const ytdl = require('ytdl-core')
