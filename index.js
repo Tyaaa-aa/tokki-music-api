@@ -50,25 +50,40 @@ app.use(function (req, res, next) {
 app.get('/api/stream', async function (req, res) {
     handleView(req, res)
 })
-
+const https = require('https');
 app.get('/api/music', async function (req, res) {
     const url = req.query.q
-
     try {
-        let vara = fetch(`https://www.youtube.com/oembed?url=http%3A//www.youtube.com/watch?v=${url}&format=json`)
-        vara.then(async function (response) {
-            if (response.ok) {
-                const ytdl = require('ytdl-core')
 
-                let info = await ytdl(url, {
-                    filter: 'audioonly'
-                })
+        https.get(`https://www.youtube.com/oembed?url=http%3A//www.youtube.com/watch?v=${url}&format=json`, async (resp) => {
+            let data = ''
 
-                info.pipe(res)
-            }
-        }).catch(function (err) {
-            console.log(err)
+            // A chunk of data has been received.
+            resp.on('data', (chunk) => {
+                data += chunk
+            })
+
+            // The whole response has been received. Print out the result.
+            resp.on('end', async () => {
+                // console.log(data)
+                // return
+                if (data != "Bad Request") {
+                    const ytdl = require('ytdl-core')
+
+                    let info = await ytdl(url, {
+                        filter: 'audioonly'
+                    })
+
+                    info.pipe(res)
+                }else{
+                    res.send("Error, invalid video id provided.")
+                }
+            })
+
+        }).on("error", (err) => {
+            console.log("Error: " + err.message)
         })
+
     } catch (error) {
         console.log(error)
     }
