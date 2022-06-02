@@ -2,6 +2,7 @@
   "dependencies": {
     "@bishal-9/youtube-to-mp3": "^1.0.0",
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
+    "axios": "^0.27.2",
     "cors": "^2.8.5",
     "cors-anywhere": "^0.4.4",
     "express": "^4.18.1",

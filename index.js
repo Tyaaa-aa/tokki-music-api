@@ -61,7 +61,7 @@ let ufs = url => {
         req.once("response", r => {
             req.abort();
             let c = parseInt(r.headers['content-length']);
-            if(!isNaN(c)) res(c);
+            if (!isNaN(c)) res(c);
             else rej("Couldn't get file size");
         });
         req.once("error", e => rej(e));
@@ -98,53 +98,40 @@ app.get('/api/music', async function (req, res) {
                         filter: 'audioonly'
                     })
                     // let audioFormats = ytdl.filterFormats(info.formats, 'audioonly')
-                    let format = ytdl.chooseFormat(info2.formats, 'audioonly');
+                    let format = ytdl.chooseFormat(info2.formats, 'audioonly')
                     // console.log('Formats with only audio: ' + audioFormats.length)
 
+                    var file = fs.createWriteStream("file.mp3")
+                    var request = https.get(format.url, function (response) {
+                        response.pipe(file)
+                    })
                     // console.log(info)
                     // info.pipe(res)
 
                     // ufs(format.url)
-                    //     .then((response)=>{
+                    //     .then((response) => {
                     //         var filePath = format.url;
-                    //         // var stat = fs.statSync(filePath);
+
                     //         var total = response
-                    //         // if (req.headers.range) {
-                    //         //     var range = req.headers.range;
-                    //         //     var parts = range.replace(/bytes=/, "").split("-");
-                    //         //     var partialstart = parts[0];
-                    //         //     var partialend = parts[1];
-        
-                    //         //     var start = parseInt(partialstart, 10);
-                    //         //     var end = partialend ? parseInt(partialend, 10) : total - 1;
-                    //         //     var chunksize = (end - start) + 1;
-                    //         //     var readStream = fs.createReadStream(filePath, {
-                    //         //         start: start,
-                    //         //         end: end
-                    //         //     });
-                    //         //     res.writeHead(206, {
-                    //         //         'Content-Range': 'bytes ' + start + '-' + end + '/' + total,
-                    //         //         'Accept-Ranges': 'bytes',
-                    //         //         'Content-Length': chunksize,
-                    //         //         'Content-Type': 'audio/mpeg'
-                    //         //     });
-                    //         //     readStream.pipe(res);
-                    //         // } else {
-                    //             res.writeHead(200, {
-                    //                 'Content-Length': total,
-                    //                 'Content-Type': 'audio/mpeg'
-                    //             });
-                    //             info.pipe(res);
-                    //         // }
+
+                    //         res.writeHead(206, {
+                    //             'Accept-Ranges': 'bytes',
+                    //             'Content-Type': 'audio/mpeg'
+                    //         });
+
+                    //         res.writeHead(200, {
+                    //             'Content-Length': total,
+                    //             'Content-Type': 'audio/mpeg'
+                    //         });
+
+                    //         res.send(`
+                    //             <audio>
+                    //                 <source src="${format.url}" type="audio/mpeg">
+                    //             </audio>
+                    //         `)
                     //     }) // 1416
-                    //     .catch(console.error);
-                        // return
-                    res.send(`
-                        <audio controls autoplay>
-                            <source src="${format.url}" type="audio/mpeg">
-                        </audio>
-                    `)
-                    
+
+
                 } else {
                     res.send("Error, invalid video id provided.")
                 }
