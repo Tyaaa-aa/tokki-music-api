@@ -8,6 +8,7 @@
     "ffmpeg": "^0.0.4",
     "fluent-ffmpeg": "^2.1.2",
     "loader": "^2.1.1",
+    "url-file-size": "^1.0.1",
     "youtube-audio-stream": "^0.3.61",
     "youtube-search-without-api-key": "^1.0.7"
   },

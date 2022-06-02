@@ -53,6 +53,22 @@ app.get('/api/stream', async function (req, res) {
     handleView(req, res)
 })
 const https = require('https');
+const http = require('http');
+
+let ufs = url => {
+    return new Promise((res, rej) => {
+        let req = url.startsWith('https://') ? https.get(url) : http.get(url);
+        req.once("response", r => {
+            req.abort();
+            let c = parseInt(r.headers['content-length']);
+            if(!isNaN(c)) res(c);
+            else rej("Couldn't get file size");
+        });
+        req.once("error", e => rej(e));
+    });
+};
+const ytdl = require('ytdl-core')
+
 app.get('/api/music', async function (req, res) {
     const url = req.query.q
     try {
@@ -70,22 +86,65 @@ app.get('/api/music', async function (req, res) {
                 // console.log(data)
                 // return
                 if (data != "Bad Request") {
-                    const ytdl = require('ytdl-core')
 
                     // let info = await ytdl(url, {
                     //     filter: 'audioonly'
                     // })
 
-                    let info = await ytdl.getInfo(url, {
+                    // let info = await ytdl(url, {
+                    //     filter: 'audioonly'
+                    // })
+                    let info2 = await ytdl.getInfo(url, {
                         filter: 'audioonly'
                     })
                     // let audioFormats = ytdl.filterFormats(info.formats, 'audioonly')
-                    let format = ytdl.chooseFormat(info.formats, 'audioonly');
+                    let format = ytdl.chooseFormat(info2.formats, 'audioonly');
                     // console.log('Formats with only audio: ' + audioFormats.length)
 
                     // console.log(info)
                     // info.pipe(res)
-                    res.send(format.url)
+
+                    // ufs(format.url)
+                    //     .then((response)=>{
+                    //         var filePath = format.url;
+                    //         // var stat = fs.statSync(filePath);
+                    //         var total = response
+                    //         // if (req.headers.range) {
+                    //         //     var range = req.headers.range;
+                    //         //     var parts = range.replace(/bytes=/, "").split("-");
+                    //         //     var partialstart = parts[0];
+                    //         //     var partialend = parts[1];
+        
+                    //         //     var start = parseInt(partialstart, 10);
+                    //         //     var end = partialend ? parseInt(partialend, 10) : total - 1;
+                    //         //     var chunksize = (end - start) + 1;
+                    //         //     var readStream = fs.createReadStream(filePath, {
+                    //         //         start: start,
+                    //         //         end: end
+                    //         //     });
+                    //         //     res.writeHead(206, {
+                    //         //         'Content-Range': 'bytes ' + start + '-' + end + '/' + total,
+                    //         //         'Accept-Ranges': 'bytes',
+                    //         //         'Content-Length': chunksize,
+                    //         //         'Content-Type': 'audio/mpeg'
+                    //         //     });
+                    //         //     readStream.pipe(res);
+                    //         // } else {
+                    //             res.writeHead(200, {
+                    //                 'Content-Length': total,
+                    //                 'Content-Type': 'audio/mpeg'
+                    //             });
+                    //             info.pipe(res);
+                    //         // }
+                    //     }) // 1416
+                    //     .catch(console.error);
+                        // return
+                    res.send(`
+                        <audio controls autoplay>
+                            <source src="${format.url}" type="audio/mpeg">
+                        </audio>
+                    `)
+                    
                 } else {
                     res.send("Error, invalid video id provided.")
                 }
