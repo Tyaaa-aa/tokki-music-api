@@ -21,6 +21,8 @@ const express = require('express')
 var cors = require('cors')
 // import * as cors from 'cors';
 
+const fs = require('fs');
+
 const app = express()
 
 const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
@@ -62,7 +64,7 @@ app.get('/api/music', async function (req, res) {
             resp.on('data', (chunk) => {
                 data += chunk
             })
- 
+
             // The whole response has been received. Print out the result.
             resp.on('end', async () => {
                 // console.log(data)
@@ -70,12 +72,21 @@ app.get('/api/music', async function (req, res) {
                 if (data != "Bad Request") {
                     const ytdl = require('ytdl-core')
 
-                    let info = await ytdl(url, {
+                    // let info = await ytdl(url, {
+                    //     filter: 'audioonly'
+                    // })
+
+                    let info = await ytdl.getInfo(url, {
                         filter: 'audioonly'
                     })
+                    // let audioFormats = ytdl.filterFormats(info.formats, 'audioonly')
+                    let format = ytdl.chooseFormat(info.formats, 'audioonly');
+                    // console.log('Formats with only audio: ' + audioFormats.length)
 
-                    info.pipe(res)
-                }else{
+                    // console.log(info)
+                    // info.pipe(res)
+                    res.send(format.url)
+                } else {
                     res.send("Error, invalid video id provided.")
                 }
             })
@@ -109,6 +120,9 @@ app.get('/api/search', async function (req, res) {
 
 
 let corsAnywhere = require('cors-anywhere')
+const {
+    log
+} = require('console')
 
 let proxy = corsAnywhere.createServer({
     originWhitelist: [], // Allow all origins
