@@ -92,9 +92,12 @@ app.get('/api/music', async function (req, res) {
                     //     filter: 'audioonly'
                     // })
 
-                    // let info = await ytdl(url, {
-                    //     filter: 'audioonly'
-                    // })
+                    let info = await ytdl(url, {
+                        filter: 'audioonly'
+                    })
+
+                    info.pipe(res)
+                    return
                     let info2 = await ytdl.getInfo(url, {
                         filter: 'audioonly'
                     })
@@ -111,18 +114,18 @@ app.get('/api/music', async function (req, res) {
                     const https = require('https'); // or 'https' for https:// URLs
                     const fs = require('fs');
 
-                    const file = fs.createWriteStream("file.mp3");
-                    const request = https.get(track_url, function (response) {
-                        res.header('Content-Disposition', 'attachment; filename="track.mp3"');
-                        response.pipe(res);
-                        // res.send(response)
+                    // const file = fs.createWriteStream("file.mp3");
+                    // const request = https.get(track_url, function (response) {
+                    //     res.header('Content-Disposition', 'attachment; filename="track.mp3"');
+                    //     response.pipe(res);
+                    //     // res.send(response)
 
-                        // after download completed close filestream
-                        file.on("finish", () => {
-                            file.close();
-                            console.log("Download Completed");
-                        });
-                    });
+                    //     // after download completed close filestream
+                    //     file.on("finish", () => {
+                    //         file.close();
+                    //         console.log("Download Completed");
+                    //     });
+                    // });
 
                     // got.stream(format.url)
                     //     .pipe(fs.createWriteStream('file.wav'))
@@ -143,16 +146,18 @@ app.get('/api/music', async function (req, res) {
                     //             'Content-Type': 'audio/mpeg'
                     //         });
 
-                    //         res.writeHead(200, {
-                    //             'Content-Length': total,
-                    //             'Content-Type': 'audio/mpeg'
-                    //         });
+                    res.header('Content-Disposition', 'attachment; filename="track.mpeg"');
 
-                    //         res.send(`
-                    //             <audio>
-                    //                 <source src="${format.url}" type="audio/mpeg">
-                    //             </audio>
-                    //         `)
+                    // res.header(
+                    //     'Content-Type', 'audio/mpeg'
+                    // );
+                    
+                    // res.header({
+                    //     // 'Content-Length': total,
+                    //     'Content-Type': 'audio/mpeg'
+                    // });
+
+                    res.send(`<audio><source src="${track_url}" type="audio/mpeg"></audio>`)
                     //     }) // 1416
 
 
