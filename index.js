@@ -68,6 +68,7 @@ let ufs = url => {
     });
 };
 const ytdl = require('ytdl-core')
+// const got = require('got')
 
 app.get('/api/music', async function (req, res) {
     const url = req.query.q
@@ -99,12 +100,35 @@ app.get('/api/music', async function (req, res) {
                     })
                     // let audioFormats = ytdl.filterFormats(info.formats, 'audioonly')
                     let format = ytdl.chooseFormat(info2.formats, 'audioonly')
+                    let track_url = format.url
                     // console.log('Formats with only audio: ' + audioFormats.length)
 
-                    var file = fs.createWriteStream("file.mp3")
-                    var request = https.get(format.url, function (response) {
-                        response.pipe(file)
-                    })
+                    // var file = fs.createWriteStream("file.wav")
+                    // var request = https.get(format.url, function (response) {
+                    //     res.pipe(file)
+                    // })
+
+                    const https = require('https'); // or 'https' for https:// URLs
+                    const fs = require('fs');
+
+                    const file = fs.createWriteStream("file.mp3");
+                    const request = https.get(track_url, function (response) {
+                        res.header('Content-Disposition', 'attachment; filename="track.mp3"');
+                        response.pipe(res);
+                        // res.send(response)
+
+                        // after download completed close filestream
+                        file.on("finish", () => {
+                            file.close();
+                            console.log("Download Completed");
+                        });
+                    });
+
+                    // got.stream(format.url)
+                    //     .pipe(fs.createWriteStream('file.wav'))
+                    //     .on('close', function () {
+                    //         console.log('File written!');
+                    //     });
                     // console.log(info)
                     // info.pipe(res)
 
