@@ -88,78 +88,13 @@ app.get('/api/music', async function (req, res) {
                 // return
                 if (data != "Bad Request") {
 
-                    // let info = await ytdl(url, {
-                    //     filter: 'audioonly'
-                    // })
-
-                    let info = await ytdl(url, {
+                    let info = await ytdl.getInfo(url, {
                         filter: 'audioonly'
                     })
-
-                    info.pipe(res)
-                    return
-                    let info2 = await ytdl.getInfo(url, {
-                        filter: 'audioonly'
-                    })
-                    // let audioFormats = ytdl.filterFormats(info.formats, 'audioonly')
-                    let format = ytdl.chooseFormat(info2.formats, 'audioonly')
-                    let track_url = format.url
-                    // console.log('Formats with only audio: ' + audioFormats.length)
-
-                    // var file = fs.createWriteStream("file.wav")
-                    // var request = https.get(format.url, function (response) {
-                    //     res.pipe(file)
-                    // })
-
-                    const https = require('https'); // or 'https' for https:// URLs
-                    const fs = require('fs');
-
-                    // const file = fs.createWriteStream("file.mp3");
-                    // const request = https.get(track_url, function (response) {
-                    //     res.header('Content-Disposition', 'attachment; filename="track.mp3"');
-                    //     response.pipe(res);
-                    //     // res.send(response)
-
-                    //     // after download completed close filestream
-                    //     file.on("finish", () => {
-                    //         file.close();
-                    //         console.log("Download Completed");
-                    //     });
-                    // });
-
-                    // got.stream(format.url)
-                    //     .pipe(fs.createWriteStream('file.wav'))
-                    //     .on('close', function () {
-                    //         console.log('File written!');
-                    //     });
-                    // console.log(info)
-                    // info.pipe(res)
-
-                    // ufs(format.url)
-                    //     .then((response) => {
-                    //         var filePath = format.url;
-
-                    //         var total = response
-
-                    //         res.writeHead(206, {
-                    //             'Accept-Ranges': 'bytes',
-                    //             'Content-Type': 'audio/mpeg'
-                    //         });
-
-                    res.header('Content-Disposition', 'attachment; filename="track.mpeg"');
-
-                    // res.header(
-                    //     'Content-Type', 'audio/mpeg'
-                    // );
                     
-                    // res.header({
-                    //     // 'Content-Length': total,
-                    //     'Content-Type': 'audio/mpeg'
-                    // });
-
-                    res.send(`<audio><source src="${track_url}" type="audio/mpeg"></audio>`)
-                    //     }) // 1416
-
+                    let format = ytdl.chooseFormat(info.formats, 'audioonly')
+                    let track_url = format.url
+                    res.redirect(track_url);
 
                 } else {
                     res.send("Error, invalid video id provided.")
