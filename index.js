@@ -89,12 +89,13 @@ app.get('/api/music', async function (req, res) {
                 if (data != "Bad Request") {
 
                     let info = await ytdl.getInfo(url, {
-                        filter: 'audioonly'
+                        filter: 'audioonly',
+                        downloadURL: true,
                     })
                     
                     let format = ytdl.chooseFormat(info.formats, 'audioonly')
                     let track_url = format.url
-                    res.redirect(track_url);
+                    res.redirect(`https://tokki-music-api.herokuapp.com/api/proxy/${track_url}`);
 
                 } else {
                     res.send("Error, invalid video id provided.")
