@@ -18,7 +18,7 @@ async function handleView(req, res) {
 const express = require('express')
 // import * as express from 'express';
 
-// var cors = require('cors')
+var cors = require('cors')
 // import * as cors from 'cors';
 
 const fs = require('fs');
@@ -29,21 +29,21 @@ const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
 const ffmpeg = require('fluent-ffmpeg');
 ffmpeg.setFfmpegPath(ffmpegPath);
 
-// app.use(cors())
+app.use(cors())
 app.use(function (req, res, next) {
 
     // Website you wish to allow to connect
-    res.setHeader('Access-Control-Allow-Origin', '*')
+    // res.setHeader('Access-Control-Allow-Origin', '*')
 
     // Request methods you wish to allow
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE')
+    // res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE')
 
     // Request headers you wish to allow
-    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type')
+    // res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type')
 
     // Set to true if you need the website to include cookies in the requests sent
     // to the API (e.g. in case you use sessions)
-    res.setHeader('Access-Control-Allow-Credentials', true)
+    // res.setHeader('Access-Control-Allow-Credentials', true)
 
     // Pass to next layer of middleware
     next()
@@ -157,16 +157,16 @@ app.get('/api/search', async function (req, res) {
     console.log(videos)
 })
 
-// let corsAnywhere = require('cors-anywhere')
-// const {
-//     log
-// } = require('console')
+let corsAnywhere = require('cors-anywhere')
+const {
+    log
+} = require('console')
 
-// let proxy = corsAnywhere.createServer({
-//     originWhitelist: [], // Allow all origins
-//     requireHeaders: [], // Do not require any headers.
-//     removeHeaders: [] // Do not remove any headers.
-// });
+let proxy = corsAnywhere.createServer({
+    originWhitelist: [], // Allow all origins
+    requireHeaders: [], // Do not require any headers.
+    removeHeaders: [] // Do not remove any headers.
+});
 
 /* Attach our cors proxy to the existing API on the /proxy endpoint. */
 app.get('/api/proxy/:proxyUrl*', (req, res) => {
