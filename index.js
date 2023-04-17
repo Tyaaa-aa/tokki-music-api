@@ -71,8 +71,11 @@ app.get('/api/stream', async function (req, res) {
                     let info = await ytdl(url, {
                         filter: 'audioonly'
                     })
-                    info.pipe(res)
-                    
+                    // ytdl get only the audio from the video
+                    got.stream(url).pipe(res)
+
+                    // info.pipe(res)
+
                 } else {
                     res.send("Error, invalid video id provided.")
                 }
@@ -126,10 +129,10 @@ app.get('/api/music', async function (req, res) {
                         filter: 'audioonly',
                         downloadURL: true,
                     })
-                    
+
                     let format = ytdl.chooseFormat(info.formats, 'audioonly')
                     let track_url = format.url
-                    res.redirect(`https://tokki-music-api.herokuapp.com/api/proxy/${track_url}`);
+                    res.redirect(`/api/proxy/${track_url}`);
 
                 } else {
                     res.send("Error, invalid video id provided.")
@@ -145,15 +148,6 @@ app.get('/api/music', async function (req, res) {
     }
 })
 
-
-// Search API 
-
-// // const api = require('./search')
-// const api = require('./api/search')
-
-// // app.use('/search', api) 
-// app.use('/api/search', api) 
-
 const yt = require('youtube-search-without-api-key')
 app.get('/api/search', async function (req, res) {
     const url = req.query.q
@@ -162,7 +156,6 @@ app.get('/api/search', async function (req, res) {
     res.send(videos)
     console.log(videos)
 })
-
 
 let corsAnywhere = require('cors-anywhere')
 const {
@@ -181,9 +174,39 @@ app.get('/api/proxy/:proxyUrl*', (req, res) => {
     proxy.emit('request', req, res);
 });
 
+let Jimp = require('jimp');
+app.get('/api/thumbnail/:thumbnailUrl*', (req, res) => {
+    req.url = req.url.replace('/api/thumbnail/', ''); // Strip '/proxy' from the front of the URL, else the proxy won't work.
+    // proxy.emit('request', req, res);
+    let imageUrl = req.url
+    Jimp.read(imageUrl)
+        .then(image => {
+            // Do stuff with the image.
+            image
+                // .resize(512, 288)
+                .cover(512, 288, Jimp.HORIZONTAL_ALIGN_CENTER | Jimp.VERTICAL_ALIGN_MIDDLE)
+            // res.send(image.getBase64(image.getMIME()))
+            console.log(imageUrl);
+
+            let newimage = image.getBase64(image.getMIME(), (final) => {
+                console.log(newimage);
+                console.log(final);
+            })
+            console.log(newimage);
+
+            // image.write(res)
+            // image.pipe(res)
+
+        })
+        .catch(err => {
+            // Handle an exception.
+        });
+});
+
 
 const PORT = process.env.PORT || 5050;
 app.listen(PORT, () => {
+    // log the server url and port to the console
     console.log(`Example app listening on port ${PORT}`)
     // console.log(`Example app listening on port ${app}`)
 })
