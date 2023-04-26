@@ -49,7 +49,7 @@ app.use(function (req, res, next) {
     next()
 })
 
-app.get('/api/stream', async function (req, res) {
+app.get('/stream', async function (req, res) {
     // handleView(req, res)
     const url = req.query.q
     try {
@@ -107,7 +107,7 @@ let ufs = url => {
 const ytdl = require('ytdl-core')
 // const got = require('got')
 
-app.get('/api/music', async function (req, res) {
+app.get('/music', async function (req, res) {
     const url = req.query.q
     try {
 
@@ -132,7 +132,7 @@ app.get('/api/music', async function (req, res) {
 
                     let format = ytdl.chooseFormat(info.formats, 'audioonly')
                     let track_url = format.url
-                    res.redirect(`/api/proxy/${track_url}`);
+                    res.redirect(`/proxy/${track_url}`);
 
                 } else {
                     res.send("Error, invalid video id provided.")
@@ -149,7 +149,7 @@ app.get('/api/music', async function (req, res) {
 })
 
 const yt = require('youtube-search-without-api-key')
-app.get('/api/search', async function (req, res) {
+app.get('/search', async function (req, res) {
     const url = req.query.q
     // let info = await getData(url)
     const videos = await yt.search(url);
@@ -169,14 +169,14 @@ let proxy = corsAnywhere.createServer({
 });
 
 /* Attach our cors proxy to the existing API on the /proxy endpoint. */
-app.get('/api/proxy/:proxyUrl*', (req, res) => {
-    req.url = req.url.replace('/api/proxy/', '/'); // Strip '/proxy' from the front of the URL, else the proxy won't work.
+app.get('/proxy/:proxyUrl*', (req, res) => {
+    req.url = req.url.replace('/proxy/', '/'); // Strip '/proxy' from the front of the URL, else the proxy won't work.
     proxy.emit('request', req, res);
 });
 
 let Jimp = require('jimp');
-app.get('/api/thumbnail/:thumbnailUrl*', (req, res) => {
-    req.url = req.url.replace('/api/thumbnail/', ''); // Strip '/proxy' from the front of the URL, else the proxy won't work.
+app.get('/thumbnail/:thumbnailUrl*', (req, res) => {
+    req.url = req.url.replace('/thumbnail/', ''); // Strip '/proxy' from the front of the URL, else the proxy won't work.
     // proxy.emit('request', req, res);
     let imageUrl = req.url
     Jimp.read(imageUrl)
